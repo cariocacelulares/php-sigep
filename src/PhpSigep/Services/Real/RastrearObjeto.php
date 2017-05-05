@@ -89,28 +89,30 @@ class RastrearObjeto
                         $eventos = new RastrearObjetoResultado();
                         $eventos->setEtiqueta(new Etiqueta(array('etiquetaComDv' => $objeto->numero)));
 
-                        $ev = $objeto->evento;
+                        $evt = $objeto->evento;
 
-                        $evento = new RastrearObjetoEvento();
-                        $evento->setTipo($ev->tipo);
-                        $evento->setStatus($ev->status);
-                        $evento->setDataHora(\DateTime::createFromFormat('d/m/Y H:i', $ev->data . ' ' . $ev->hora));
-                        $evento->setDescricao(SoapClientFactory::convertEncoding($ev->descricao));
-                        $evento->setDetalhe(isset($ev->detalhe) ? $ev->detalhe : '');
-                        $evento->setLocal($ev->local);
-                        $evento->setCodigo($ev->codigo);
-                        $evento->setCidade($ev->cidade);
-                        $evento->setUf($ev->uf);
+                        foreach ($evt as $ev) {
+                          $evento = new RastrearObjetoEvento();
+                          $evento->setTipo($ev->tipo);
+                          $evento->setStatus($ev->status);
+                          $evento->setDataHora(\DateTime::createFromFormat('d/m/Y H:i', $ev->data . ' ' . $ev->hora));
+                          $evento->setDescricao(SoapClientFactory::convertEncoding($ev->descricao));
+                          $evento->setDetalhe(isset($ev->detalhe) ? $ev->detalhe : '');
+                          $evento->setLocal($ev->local);
+                          $evento->setCodigo($ev->codigo);
+                          $evento->setCidade($ev->cidade);
+                          $evento->setUf($ev->uf);
 
-                        // Sempre adiciona o recebedor ao resultado, mesmo ele sendo exibdo apenas quanto 'tipo' = BDE e 'status' = 01
-                        $evento->setRecebedor(
-                            isset($ev->recebedor) && !empty($ev->recebedor) ? trim($ev->recebedor) : ''
-                        );
+                          // Sempre adiciona o recebedor ao resultado, mesmo ele sendo exibdo apenas quanto 'tipo' = BDE e 'status' = 01
+                          $evento->setRecebedor(
+                              isset($ev->recebedor) && !empty($ev->recebedor) ? trim($ev->recebedor) : ''
+                          );
 
-                        // Adiciona o evento ao resultado
-                        $eventos->addEvento($evento);
+                          // Adiciona o evento ao resultado
+                          $eventos->addEvento($evento);
+                        }
 
-                        $resultado[] = $eventos;
+                        $resultado = $eventos;
                     }
 
                     $result->setResult($resultado);
